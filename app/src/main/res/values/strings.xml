@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">materialdoc</string>
+    <string name="action_settings">Settings</string>
+    <string name="search_hint">Search dogs</string>
+    <string name="query_hint">Search book…</string>
+    <string name="title_activity_auto_complete">AutoCompleteActivity</string>
+</resources>

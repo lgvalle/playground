@@ -1,0 +1,58 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary2</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark2</item>
+        <item name="colorAccent">@color/colorAccent2</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <style name="Widget.SearchView" parent="android:style/Widget.Material.SearchView">
+        <item name="queryBackground">@android:color/transparent</item>
+        <item name="submitBackground">@android:color/transparent</item>
+        <item name="searchIcon">@null</item>
+    </style>
+
+    <style name="Autocomplete" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textColorHint">#3F51B5</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:background">#8BC34A</item>
+        <item name="colorControlNormal">@color/amber500</item>
+        <item name="colorControlActivated">@color/cyan500</item>
+    </style>
+
+    <!--
+    <style name="Autocomplete" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+
+        <item name="android:colorAccent">@color/green500</item>
+        <item name="android:textColorHint">@color/green500</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:backgroundTint">@color/amber500</item>
+
+    </style>
+    -->
+
+
+    <style name="DropDownListViewStyle">
+        <item name="android:divider">#4F4F4F</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:dividerHeight">1dp</item>
+    </style>
+
+
+    <style name="DropDownItemLight" parent="@android:style/Widget.Material.DropDownItem">
+        <item name="android:textColor">@android:color/holo_blue_light</item>
+    </style>
+
+</resources>
