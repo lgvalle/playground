@@ -1,0 +1,33 @@
+apply plugin: 'org.ajoberstar.grgit'
+
+//def versionFile = file("../version.json")
+//def versionJSON = getJSON(versionFile)
+//def versionCode = versionJSON.buildNumber
+//def versionName = "${versionJSON.major}.${versionJSON.minor}.${versionJSON.revision}"
+
+def versionName = "0.0.3"
+
+ext.versionName = versionName
+
+task releaseTag() {
+    createReleaseTag()
+}
+
+private void createReleaseTag() {
+    def tagName = "release/${versionName}"
+    ("git tag $tagName").execute()
+    ("git push --tags").execute()
+}
+
+task prepareRelease {
+    description = 'Prepare changelog and tag for release'
+    group = 'release'
+//    dependsOn prepareGhPages, prepareGhCredentials
+    doLast {
+        String changelog = extractChangelog()
+        grgit.tag.add {
+            name = tag
+            message = "Release $tag\n\n$changelog"
+        }
+    }
+}

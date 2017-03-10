@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
 
+
 android {
     compileSdkVersion 'Google Inc.:Google APIs:23'
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "xyz.lgvalle.materialdoc"
@@ -17,7 +18,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
+
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -25,3 +32,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.+'
     compile 'com.android.support:design:23.+'
 }
+
+apply from: rootProject.file('app/vers.gradle')
+//apply from: project.rootProject.teamPropsFile('vers.gradle')
