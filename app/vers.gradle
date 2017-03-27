@@ -5,9 +5,11 @@ apply plugin: 'org.ajoberstar.grgit'
 //def versionCode = versionJSON.buildNumber
 //def versionName = "${versionJSON.major}.${versionJSON.minor}.${versionJSON.revision}"
 
-def versionName = "0.0.3"
+def versionName = "1.19.72"
 
 ext.versionName = versionName
+
+project.ext.dryRun = true
 
 task releaseTag() {
     createReleaseTag()
@@ -26,8 +28,44 @@ task prepareRelease {
     doLast {
         String changelog = extractChangelog()
         grgit.tag.add {
-            name = tag
-            message = "Release $tag\n\n$changelog"
+            name = "${versionName}"
+            message = "Release ${versionName}\n$changelog"
         }
+    }
+}
+
+private String extractChangelog() {
+    String fullChangelog = rootProject.file('CHANGELOG.md').text
+    def latestChangelog = (fullChangelog =~ /\## Version ${project.versionName}.*\n-*([\s\S]*?)\## Version.*\n-*/)
+    if (latestChangelog.size() > 0) {
+        return latestChangelog[0][1].trim()
+    }
+
+    def firstChangelog = (fullChangelog =~ /\[## Version ${project.versionName}.*\n-*([\s\S]*)/)
+    if (firstChangelog.size() > 0) {
+        return firstChangelog[0][1].trim()
+    }
+    throw new GradleException("No changelog found for version $project.versionName")
+}
+
+task printChangelog {
+    group = 'help'
+    description = "Print the provisional changelog for version $project.version"
+    doLast {
+        println "\nChangelog for version $project.version:\n${extractChangelog()}\n"
+    }
+}
+
+task publishRelease {
+    description = "Publish release for plugin version: ${project.version}"
+    group = 'release'
+    if (project.hasProperty('dryRun') && project['dryRun'] == true) {
+        println "Publishing release"
+//        dependsOn prepareRelease, publishArtifact, publishGroovydoc
+//        doLast {
+//            grgit.push {
+//                tags = true
+//            }
+//        }
     }
 }
