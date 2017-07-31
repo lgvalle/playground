@@ -21,7 +21,7 @@ def getVersionName(versionJSON) {
     return "v${versionJSON.major}.${versionJSON.minor}.${versionJSON.patch}"
 }
 
-task prepareAlphaRelease(dependsOn: check) {
+task prepareReleaseBranch(dependsOn: check) {
     description = "Publish release for plugin version: ${project.version}"
     group = 'release'
 
@@ -63,6 +63,8 @@ task prepareAlphaRelease(dependsOn: check) {
 
         // Commit
         grgit.commit(message: "Version updated for release ${versionName}")
+
+
     }
 }
 
