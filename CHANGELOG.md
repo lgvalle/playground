@@ -1,5 +1,8 @@
 ## Change log
 
+## Version v1.20.105
+  - Add publish release gradle task
+  
 ## Version v1.20.104
   - Fixing a bug in 1.20.103
   - Adding a new feature
