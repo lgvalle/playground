@@ -21,8 +21,11 @@ def getVersionName(versionJSON) {
     return "v${versionJSON.major}.${versionJSON.minor}.${versionJSON.patch}"
 }
 
+ext.versionCode = versionCode
+ext.versionName = versionName
+
 task prepareReleaseBranch(dependsOn: check) {
-    description = "Publish release for plugin version: ${project.version}"
+    description = "Creates release branch and bumps up version number for: ${project.version}"
     group = 'release'
 
     doLast {
@@ -64,8 +67,56 @@ task prepareReleaseBranch(dependsOn: check) {
         // Commit
         grgit.commit(message: "Version updated for release ${versionName}")
 
-
     }
 }
 
+task pushReleaseBrach << {
+    description = "Pushes release branch, creates tag with changelo.md content and opens pre-release PR: ${project.version}"
+    group = 'release'
+
+    // Make sure only changelog.md has changed
+    def changes = grgit.status().unstaged.getAllChanges()
+    if (changes.size() != 1 || changes[0] != "CHANGELOG.md") {
+        throw new GradleException("[!!] The only change at this point should be on CHANGELOG.md. Please review release process at: https://github.com/novoda/piriform-ccleaner/wiki/Release-Process-(2017)")
+    }
+
+    // Commit changelog.md & push release branch
+    grgit.add(update: true, patterns: changes)
+    grgit.commit(message: "Changelog updated for release ${versionName}")
+    grgit.push()
+
+
+    // Create tag / Draft release
+
+//    String changelog = extractChangelog()
+//    grgit.tag.add {
+//        name = "${versionName}"
+//        message = "Release ${versionName}\n$changelog"
+//    }
+}
+
+private String extractChangelog() {
+    String fullChangelog = rootProject.file('CHANGELOG.md').text
+
+    def latestChangelog = (fullChangelog =~ /\## Version ${project.versionName}.*\n-*([\s\S]*?)\## Version.*\n-*/)
+
+    if (latestChangelog.size() > 0) {
+        return latestChangelog[0][1].trim()
+    }
+
+    def firstChangelog = (fullChangelog =~ /\[## Version ${project.versionName}.*\n-*([\s\S]*)/)
+
+    if (firstChangelog.size() > 0) {
+        return firstChangelog[0][1].trim()
+    }
+    throw new GradleException("No changelog found for version ${project.versionName}")
+}
+
+task printChangelog {
+    group = 'help'
+    description = "Print the provisional changelog for version ${project.versionName}"
+    doLast {
+        println "\nChangelog for version $project.versionName:\n${extractChangelog()}\n"
+    }
+}
 

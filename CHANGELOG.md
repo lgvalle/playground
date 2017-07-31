@@ -1,5 +1,10 @@
 ## Change log
 
+## Version v1.20.104
+  - Fixing a bug in 1.20.103
+  - Adding a new feature
+  - Adding another feature
+
 ## Version 1.19.72
   - Add analytics for XXX
   - Fix cache size XXX
