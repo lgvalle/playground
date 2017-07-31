@@ -50,22 +50,24 @@ private String extractChangelog() {
 
 task printChangelog {
     group = 'help'
-    description = "Print the provisional changelog for version $project.version"
+    description = "Print the provisional changelog for version $project.versionName"
     doLast {
-        println "\nChangelog for version $project.version:\n${extractChangelog()}\n"
+        println "\nChangelog for version $project.versionName:\n${extractChangelog()}\n"
     }
 }
 
 task publishRelease {
     description = "Publish release for plugin version: ${project.version}"
     group = 'release'
-    if (project.hasProperty('dryRun') && project['dryRun'] == true) {
+    if (project.hasProperty('dryRun') && project['dryRun'] != true) {
         println "Publishing release"
-//        dependsOn prepareRelease, publishArtifact, publishGroovydoc
-//        doLast {
-//            grgit.push {
-//                tags = true
-//            }
-//        }
+        dependsOn prepareRelease /*publishArtifact, publishGroovydoc*/
+        doLast {
+            grgit.push {
+                tags = true
+            }
+        }
+    } else {
+        println "Dry Run - Release won't be published"
     }
 }

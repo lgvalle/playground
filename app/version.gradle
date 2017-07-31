@@ -1,0 +1,69 @@
+apply plugin: 'org.ajoberstar.grgit'
+
+/**
+ * See https://gist.github.com/r0adkll/894322f31f96ac6809d4
+ */
+
+import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
+
+def versionFile = file("../version.json")
+def versionJSON = getJSON(versionFile)
+def versionCode = versionJSON.versionCode
+def versionName = getVersionName(versionJSON)
+
+def getJSON(file) {
+    return new JsonSlurper().parseText(file.text)
+}
+
+def getVersionName(versionJSON) {
+    // Expose as extra properties at project level
+    return "v${versionJSON.major}.${versionJSON.minor}.${versionJSON.patch}"
+}
+
+task prepareAlphaRelease(dependsOn: check) {
+    description = "Publish release for plugin version: ${project.version}"
+    group = 'release'
+
+    doLast {
+        // Ensure release starts from develop branch
+
+        if (!grgit.branch.getCurrent().getName().equals("develop")) {
+            println "[!!] You must branch releases from develop"
+            //throw new GradleException("You must branch releases from develop")
+        }
+        println "Preparing release for existing version name" + versionName
+        println "Preparing release for existing version code" + versionCode
+        // Ensure our working copy is clean first
+        if (!grgit.status().isClean()) {
+            println "[!!] You must NOT have any changes in your working copy"
+            //throw new GradleException("You must NOT have any changes in your working copy")
+        }
+
+        // Update version code
+        versionJSON.patch += 1
+        versionJSON.versionCode += 1
+        versionCode = versionJSON.versionCode
+        versionName = getVersionName(versionJSON)
+        versionFile.write(new JsonBuilder(versionJSON).toPrettyString())
+
+        // Apply version code to all variants. This is necessary
+        // so when we build the APK, it gets the updated values
+        android.applicationVariants.all { variant ->
+            variant.mergedFlavor.versionCode = versionCode
+            variant.mergedFlavor.versionName = "${variant.name}-${versionName}"
+        }
+
+        // Checkout new release branch
+        grgit.checkout(branch: "release/${versionName}", createBranch: true)
+
+        // Add changes
+        def changes = grgit.status().unstaged.getAllChanges()
+        grgit.add(update: true, patterns: changes)
+
+        // Commit
+        grgit.commit(message: "Version updated for release ${versionName}")
+    }
+}
+
+

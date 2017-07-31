@@ -34,4 +34,5 @@ dependencies {
 }
 
 apply from: rootProject.file('app/vers.gradle')
+apply from: rootProject.file('app/version.gradle')
 //apply from: project.rootProject.teamPropsFile('vers.gradle')
